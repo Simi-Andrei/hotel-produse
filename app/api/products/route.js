@@ -1,20 +1,40 @@
 import connectDB from "@/lib/database";
 import Product from "@/models/product";
+import Shelf from "@/models/shelf";
 import { NextResponse } from "next/server";
 
 export const POST = async (req, res) => {
   try {
-    const product = await req.json();
-    console.log(product);
+    const { brand, stock, shelf, slot } = await req.json();
 
     await connectDB();
 
-    const newProduct = new Product(product);
+    const newProduct = new Product({ brand, stock, shelf, slot });
 
     await newProduct.save();
 
-    return NextResponse.json(product);
+    const shelfToUpdate = await Shelf.findOne({ number: shelf.toUpperCase() });
+    if (shelfToUpdate) {
+      shelfToUpdate.slots[slot - 1] = true;
+      await shelfToUpdate.save();
+    }
+
+    return NextResponse.redirect("/products");
   } catch (error) {
     return NextResponse.json({ error: "Failed to add product to database!" });
+  }
+};
+
+export const GET = async (req, res) => {
+  try {
+    await connectDB();
+
+    const products = await Product.find({});
+
+    return NextResponse.json(products);
+  } catch (error) {
+    return NextResponse.json({
+      error: "Failed to retrieve the products from the database!",
+    });
   }
 };

@@ -6,31 +6,15 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    profile: {
-      type: String,
-      required: true,
-    },
-    dimensions: {
-      type: String,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    season: {
-      type: String,
-      required: true,
-    },
-    speedIndicator: {
-      type: String,
-      required: true,
-    },
-    sell: {
+    stock: {
       type: Number,
       required: true,
     },
-    stock: {
+    shelf: {
+      type: String,
+      required: true,
+    },
+    slot: {
       type: Number,
       required: true,
     },

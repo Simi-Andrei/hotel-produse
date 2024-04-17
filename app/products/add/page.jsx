@@ -3,63 +3,55 @@
 import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { revalidate } from "@/utils/revalidate";
 
 const schema = Yup.object().shape({
   brand: Yup.string().required("Introdu marca"),
-  profile: Yup.string().required("Introdu profilul"),
-  dimensions: Yup.string().required("Introdu dimensiunile"),
-  label: Yup.string().required("Introdu eticheta"),
-  season: Yup.string().required("Introdu anotimpul"),
-  speedIndicator: Yup.string().required("Introdu indicele de viteza"),
-  sell: Yup.number().required("Introdu pretul").min(1, "Pretul nu poate fi 0"),
   stock: Yup.number().required("Introdu stocul").min(1, "Stocul nu poate fi 0"),
+  shelf: Yup.string().required("Introdu raftul"),
+  slot: Yup.number()
+    .required()
+    .min(1, "Introdu slotul (nu poate ramane 0)")
+    .max(10, "Numarul de sloturi nu poate depasi 10"),
 });
 
 const AdaugarePage = () => {
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
   const formik = useFormik({
     initialValues: {
       brand: "",
-      profile: "",
-      dimensions: "",
-      label: "",
-      season: "",
-      speedIndicator: "",
-      sell: 0,
       stock: 0,
+      shelf: "",
+      slot: 0,
     },
+
     validationSchema: schema,
 
-    onSubmit: async ({
-      brand,
-      profile,
-      dimensions,
-      label,
-      season,
-      speedIndicator,
-      sell,
-      stock,
-    }) => {
+    onSubmit: async ({ brand, stock, shelf, slot }) => {
       try {
-        const product = {
-          brand,
-          profile,
-          dimensions,
-          label,
-          season,
-          speedIndicator,
-          sell,
-          stock,
-        };
+        setLoading(true);
 
-        await fetch("http://localhost:3000/api/products", {
+        const res = await fetch("http://localhost:3000/api/products", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(product),
+          body: JSON.stringify({ brand, stock, shelf, slot }),
         });
+
+        if (res.ok) {
+          revalidate("/products");
+          router.push("/products");
+        }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -67,8 +59,8 @@ const AdaugarePage = () => {
   const { errors, touched, values, handleChange, handleSubmit } = formik;
 
   return (
-    <div className="py-1 text-sm">
-      <div className="border border-gray-200 p-1 w-1/3 mx-auto">
+    <div className="text-sm">
+      <div className="border border-gray-200 p-1 w-1/3 mx-auto mt-10">
         <h2 className="text-center text-lg font-semibold my-3">
           Adauga produs
         </h2>
@@ -98,134 +90,6 @@ const AdaugarePage = () => {
             <div className="flex justify-between">
               <label
                 className="inline-block font-semibold mb-0.5"
-                htmlFor="profile"
-              >
-                Profil*
-              </label>
-              {errors.profile && touched.profile && (
-                <span className="text-red-500 ml-2">{errors.profile}</span>
-              )}
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="profile"
-              name="profile"
-              value={values.profile}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="dimensions"
-              >
-                Dimensiuni*
-              </label>
-              {errors.dimensions && touched.dimensions && (
-                <span className="text-red-500 ml-2">{errors.dimensions}</span>
-              )}
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="dimensions"
-              name="dimensions"
-              value={values.dimensions}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="label"
-              >
-                Eticheta*
-              </label>
-              {errors.label && touched.label && (
-                <span className="text-red-500 ml-2">{errors.label}</span>
-              )}
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="label"
-              name="label"
-              value={values.label}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="season"
-              >
-                Anotimp*
-              </label>
-              {errors.season && touched.season && (
-                <span className="text-red-500 ml-2">{errors.season}</span>
-              )}
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="season"
-              name="season"
-              value={values.season}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="speedIndicator"
-              >
-                S/V*
-              </label>
-              {errors.speedIndicator && touched.speedIndicator && (
-                <span className="text-red-500 ml-2">
-                  {errors.speedIndicator}
-                </span>
-              )}
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="speedIndicator"
-              name="speedIndicator"
-              value={values.speedIndicator}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="sell"
-              >
-                Vanzare*
-              </label>
-              {errors.sell && touched.sell && (
-                <span className="text-red-500 ml-2">{errors.sell}</span>
-              )}
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="number"
-              id="sell"
-              name="sell"
-              value={values.sell}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
                 htmlFor="stock"
               >
                 Stoc*
@@ -243,16 +107,61 @@ const AdaugarePage = () => {
               onChange={handleChange}
             />
           </div>
+          <div className="my-2">
+            <div className="flex justify-between">
+              <label
+                className="inline-block font-semibold mb-0.5"
+                htmlFor="shelf"
+              >
+                Raft*
+              </label>
+              {errors.shelf && touched.shelf && (
+                <span className="text-red-500 ml-2">{errors.shelf}</span>
+              )}
+            </div>
+            <input
+              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
+              type="text"
+              id="shelf"
+              name="shelf"
+              value={values.shelf}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="my-2">
+            <div className="flex justify-between">
+              <label
+                className="inline-block font-semibold mb-0.5"
+                htmlFor="slot"
+              >
+                Slot*
+              </label>
+              {errors.slot && touched.slot && (
+                <span className="text-red-500 ml-2">{errors.slot}</span>
+              )}
+            </div>
+            <input
+              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
+              type="number"
+              id="slot"
+              name="slot"
+              value={values.slot}
+              onChange={handleChange}
+            />
+          </div>
           <div className="mt-3 text-right">
             <Link
-              href="/anvelope"
-              className="font-semibold inline-block bg-black rounded py-1.5 px-4 text-white hover:bg-neutral-700 duration-500 mr-4"
+              href="/products"
+              className={`${
+                loading && "brightness-50 pointer-events-none"
+              } font-semibold inline-block bg-black rounded py-1.5 px-4 text-white hover:bg-neutral-700 duration-500 mr-4`}
             >
               - Anulare
             </Link>
             <button
+              disabled={loading}
               type="submit"
-              className="font-semibold inline-block bg-orange-500 rounded py-1.5 px-4 text-white hover:bg-orange-700 duration-500"
+              className="disabled:brightness-50 font-semibold inline-block bg-orange-500 rounded py-1.5 px-4 text-white enabled:hover:bg-orange-700 duration-500"
             >
               + Adauga
             </button>
