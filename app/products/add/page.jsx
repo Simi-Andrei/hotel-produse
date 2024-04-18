@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { revalidate } from "@/utils/revalidate";
 
 const schema = Yup.object().shape({
@@ -12,15 +12,30 @@ const schema = Yup.object().shape({
   stock: Yup.number().required("Introdu stocul").min(1, "Stocul nu poate fi 0"),
   shelf: Yup.string().required("Introdu raftul"),
   slot: Yup.number()
-    .required()
+    .required("Introdu slotul")
     .min(1, "Introdu slotul (nu poate ramane 0)")
-    .max(10, "Numarul de sloturi nu poate depasi 10"),
+    .max(10, "Numarul slotului nu poate depasi 10"),
 });
 
 const AdaugarePage = () => {
   const [loading, setLoading] = useState(false);
+  const [shelves, setShelves] = useState([]);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const getAllShelves = async () => {
+      try {
+        const res = await fetch("/api/shelves");
+
+        const shelves = await res.json();
+        setShelves(shelves);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAllShelves();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -107,6 +122,7 @@ const AdaugarePage = () => {
               onChange={handleChange}
             />
           </div>
+
           <div className="my-2">
             <div className="flex justify-between">
               <label
