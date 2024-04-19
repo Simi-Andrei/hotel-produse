@@ -3,7 +3,6 @@ import Product from "@/models/product";
 import Link from "next/link";
 import { FaEdit, FaRegTrashAlt } from "react-icons/fa";
 import { FiChevronsLeft, FiChevronsRight } from "react-icons/fi";
-import SlotsMap from "@/app/components/slotsMap/SlotsMap";
 
 const getAllProducts = async () => {
   try {
@@ -20,7 +19,21 @@ const getAllProducts = async () => {
 const ProductsPage = async () => {
   const products = await getAllProducts();
 
-  return (
+  return products.length === 0 ? (
+    <div className="h-full flex flex-col items-center justify-center">
+      <p className="text-center font-semibold mb-2">
+        Nu exista produse de afisat
+      </p>
+      <div className="py-1 text-center">
+        <Link
+          className="font-semibold inline-block bg-orange-500 rounded py-1 px-2 text-white"
+          href="/products/add"
+        >
+          + Adauga
+        </Link>
+      </div>
+    </div>
+  ) : (
     <div className="h-full flex flex-col text-sm">
       <div className="py-1">
         <Link
@@ -58,17 +71,17 @@ const ProductsPage = async () => {
                 <td className="border border-gray-200 py-0.5 px-1">
                   {product.stock}
                 </td>
-                <td className="border border-gray-200 py-0.5 px-1">
+                <td className="border border-gray-200 py-0.5 px-1 uppercase">
                   {product.shelf}
                 </td>
                 <td className="border border-gray-200 py-0.5 px-1">
-                  {product.slot}
+                  {product.slot + 1}
                 </td>
                 <td className="border border-gray-200 py-0.5 px-1">
                   <div className="flex items-center justify-evenly">
                     <Link
                       className="p-1.5 border border-gray-200 rounded hover:bg-gray-200 duration-500"
-                      href="/"
+                      href={`/products/${product._id}/edit`}
                     >
                       <FaEdit className="text-blue-500" />
                     </Link>
@@ -87,7 +100,6 @@ const ProductsPage = async () => {
         <span>1 / 12</span>
         <FiChevronsRight className="ml-3" />
       </div>
-      <SlotsMap />
     </div>
   );
 };
