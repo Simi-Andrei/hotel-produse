@@ -44,6 +44,8 @@ const AddProductPage = () => {
 
   const formik = useFormik({
     initialValues: {
+      customerLastname: "",
+      customerFirstname: "",
       brand: "",
       stock: 0,
       shelf: "",
@@ -52,7 +54,14 @@ const AddProductPage = () => {
 
     validationSchema: schema,
 
-    onSubmit: async ({ brand, stock, shelf, slot }) => {
+    onSubmit: async ({
+      customerLastname,
+      customerFirstname,
+      brand,
+      stock,
+      shelf,
+      slot,
+    }) => {
       try {
         setLoading(true);
 
@@ -61,12 +70,20 @@ const AddProductPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ brand, stock, shelf, slot }),
+          body: JSON.stringify({
+            customerLastname,
+            customerFirstname,
+            brand,
+            stock,
+            shelf,
+            slot,
+          }),
         });
 
         if (res.ok) {
-          revalidate("/products");
-          router.push("/products");
+          const lastPage = await getTotalNumberOfProducts();
+          revalidate(`/products?page=${lastPage}`);
+          router.push(`/products?page=${lastPage}`);
         }
       } catch (error) {
         console.log(error);
@@ -79,6 +96,20 @@ const AddProductPage = () => {
   const { errors, touched, values, handleChange, handleSubmit, setFieldValue } =
     formik;
 
+  const getTotalNumberOfProducts = async () => {
+    try {
+      const res = await fetch("/api/products");
+
+      const { totalProductsNumber } = await res.json();
+
+      const lastPage = Math.ceil(totalProductsNumber / 20);
+
+      return lastPage;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="text-sm">
       <div className="border border-gray-200 p-1 w-1/3 mx-auto mt-10">
@@ -86,6 +117,48 @@ const AddProductPage = () => {
           Adauga produs
         </h2>
         <form onSubmit={handleSubmit} className="p-2">
+          <div className="my-2">
+            <div className="flex justify-between">
+              <label
+                className="inline-block font-semibold mb-0.5"
+                htmlFor="customerLastname"
+              >
+                Nume client*
+              </label>
+              {errors.customerLastname && touched.customerLastname && (
+                <span className="text-red-500">{errors.customerLastname}</span>
+              )}
+            </div>
+            <input
+              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
+              type="text"
+              id="customerLastname"
+              name="customerLastname"
+              value={values.customerLastname}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="my-2">
+            <div className="flex justify-between">
+              <label
+                className="inline-block font-semibold mb-0.5"
+                htmlFor="customerFirstname"
+              >
+                Prenume client*
+              </label>
+              {errors.customerFirstname && touched.customerFirstname && (
+                <span className="text-red-500">{errors.customerFirstname}</span>
+              )}
+            </div>
+            <input
+              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
+              type="text"
+              id="customerFirstname"
+              name="customerFirstname"
+              value={values.customerFirstname}
+              onChange={handleChange}
+            />
+          </div>
           <div className="my-2">
             <div className="flex justify-between">
               <label
@@ -197,7 +270,7 @@ const AddProductPage = () => {
                             <label
                               className={`inline-flex items-center justify-center bg-white border border-gray-500 min-w-16 h-full font-bold cursor-pointer mr-0.5 duration-300 rounded-sm ${
                                 values.shelf === shelf.number
-                                  ? "bg-gray-600 text-white !border-gray-950"
+                                  ? "!bg-gray-600 text-white !border-gray-950"
                                   : ""
                               }`}
                               htmlFor={`shelf-${shelf.number}`}

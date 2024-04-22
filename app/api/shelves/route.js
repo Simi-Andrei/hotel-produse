@@ -1,4 +1,5 @@
 import connectDB from "@/lib/database";
+import Product from "@/models/product";
 import Shelf from "@/models/shelf";
 import { NextResponse } from "next/server";
 

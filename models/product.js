@@ -2,6 +2,14 @@ import { Schema, model, models } from "mongoose";
 
 const ProductSchema = new Schema(
   {
+    customerFirstname: {
+      type: String,
+      required: true,
+    },
+    customerLastname: {
+      type: String,
+      required: true,
+    },
     brand: {
       type: String,
       required: true,

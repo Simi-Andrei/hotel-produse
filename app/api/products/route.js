@@ -9,7 +9,9 @@ export const GET = async (req, res) => {
 
     const products = await Product.find({});
 
-    return NextResponse.json(products);
+    const totalProductsNumber = await Product.countDocuments();
+
+    return NextResponse.json({ products, totalProductsNumber });
   } catch (error) {
     return NextResponse.json({
       error: "Failed to retrieve the products from the database!",
@@ -19,11 +21,19 @@ export const GET = async (req, res) => {
 
 export const POST = async (req, res) => {
   try {
-    const { brand, stock, shelf, slot } = await req.json();
+    const { customerLastname, customerFirstname, brand, stock, shelf, slot } =
+      await req.json();
 
     await connectDB();
 
-    const newProduct = new Product({ brand, stock, shelf, slot });
+    const newProduct = new Product({
+      customerLastname,
+      customerFirstname,
+      brand,
+      stock,
+      shelf,
+      slot,
+    });
 
     await newProduct.save();
 
@@ -33,7 +43,7 @@ export const POST = async (req, res) => {
       await shelfToUpdate.save();
     }
 
-    return NextResponse.redirect("/products");
+    return NextResponse.json(newProduct);
   } catch (error) {
     return NextResponse.json({ error: "Failed to add product to database!" });
   }

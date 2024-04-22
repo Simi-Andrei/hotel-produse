@@ -1,4 +1,5 @@
 import connectDB from "@/lib/database";
+import Product from "@/models/product";
 import Shelf from "@/models/shelf";
 import { NextResponse } from "next/server";
 
@@ -29,7 +30,11 @@ export const POST = async (req, res) => {
       await Shelf.create({ number: shelfNumber, slots: slotsArray });
     }
 
-    return NextResponse.json({ message: "Shelves created successfully!" });
+    await Product.deleteMany({});
+
+    return NextResponse.json({
+      message: "Shelves created successfully and products deleted!",
+    });
   } catch (error) {
     return NextResponse.json({
       error: "Failed to set database shelves and slots!",

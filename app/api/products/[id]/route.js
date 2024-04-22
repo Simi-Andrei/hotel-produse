@@ -14,7 +14,7 @@ export const GET = async (req, { params }) => {
     return NextResponse.json({ product });
   } catch (error) {
     return NextResponse.json({
-      error: "Failed to retrieve the product from the database",
+      error: "Failed to retrieve the product from the database!",
     });
   }
 };
@@ -49,31 +49,56 @@ export const POST = async (req, { params }) => {
         number: shelf.toUpperCase(),
       });
 
+      const actualSlot = slot - 1;
+
       if (shelfToOccupy) {
-        shelfToOccupy.slots[slot] = true;
+        shelfToOccupy.slots[actualSlot] = true;
         await shelfToOccupy.save();
       }
 
       existingProduct.brand = brand;
       existingProduct.stock = stock;
       existingProduct.shelf = shelf;
-      existingProduct.slot = slot;
+      existingProduct.slot = actualSlot;
       await existingProduct.save();
-    } else {
-      const newProduct = new Product({ brand, stock, shelf, slot });
-      await newProduct.save();
+    } else return;
 
-      const shelfToUpdate = await Shelf.findOne({
-        number: shelf.toUpperCase(),
+    return NextResponse.json({ message: "Product updated successfully!" });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to edit the product!" });
+  }
+};
+
+export const DELETE = async (req, { params }) => {
+  try {
+    const { id } = params;
+
+    await connectDB();
+
+    const productToDelete = await Product.findById(id);
+
+    if (productToDelete) {
+      const shelfToFree = await Shelf.findOne({
+        number: productToDelete.shelf.toUpperCase(),
       });
-      if (shelfToUpdate) {
-        shelfToUpdate.slots[slot] = true;
-        await shelfToUpdate.save();
-      }
+
+      if (shelfToFree) {
+        shelfToFree.slots[productToDelete.slot] = false;
+        await shelfToFree.save();
+      } else return;
+
+      await productToDelete.deleteOne();
+    } else {
+      return NextResponse.json(
+        { message: "Product to delete was not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(newProduct);
+    return NextResponse.json(id);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to edit the product" });
+    return NextResponse.json({
+      error: "Failed to delete the product from the database!",
+    });
   }
 };
