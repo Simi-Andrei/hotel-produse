@@ -1,47 +1,38 @@
-import connectDB from "@/lib/database";
-import Product from "@/models/product";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import DeleteProductButton from "@/app/components/deleteProductButton/DeleteProductButton";
+import Loader from "@/app/components/loader/Loader";
 import { FaEdit } from "react-icons/fa";
 import { FiChevronsLeft, FiChevronsRight } from "react-icons/fi";
-import DeleteProductButton from "@/app/components/deleteProductButton/DeleteProductButton";
 import SearchProductButton from "@/app/components/searchProductButton/SearchProductButton";
 
-const getAllProducts = async (page = 1, limit = 20) => {
-  try {
-    await connectDB();
+const ProductsPage = () => {
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
-    const skip = (page - 1) * limit;
+  useEffect(() => {
+    const getAllProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        const res = await fetch("/api/products");
+        if (res.ok) {
+          const { products } = await res.json();
+          setProducts(products);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
 
-    const products = await Product.find({}).skip(skip).limit(limit);
-    const totalProducts = await Product.countDocuments();
+    getAllProducts();
+  }, []);
 
-    return { products, totalProducts };
-  } catch (error) {
-    console.log(error);
-    return { products: [], totalProducts: 0 };
-  }
-};
-
-const ProductsPage = async ({ searchParams }) => {
-  let { page } = searchParams || 1;
-  const { products, totalProducts } = await getAllProducts(page);
-
-  const totalPages = Math.ceil(totalProducts / 20);
-
-  return products.length === 0 ? (
-    <div className="h-full flex flex-col items-center justify-center">
-      <p className="text-center font-semibold mb-2">
-        Nu exista produse de afisat
-      </p>
-      <div className="py-1 text-center">
-        <Link
-          className="font-semibold inline-block bg-orange-500 rounded py-1 px-2 text-white"
-          href="/products/add"
-        >
-          + Adauga
-        </Link>
-      </div>
-    </div>
+  return loadingProducts ? (
+    <Loader />
   ) : (
     <div className="h-full flex flex-col justify-center text-sm">
       <div className="py-1 flex items-center justify-between">
@@ -79,7 +70,7 @@ const ProductsPage = async ({ searchParams }) => {
             {products.map((product, index) => (
               <tr key={index} className="text-xs">
                 <td className="border border-gray-200 py-0.5 px-1 text-center">
-                  {(page - 1) * 20 + index + 1}
+                  {index + 1}
                 </td>
                 <td className="border border-gray-200 py-0.5 px-1">
                   {product.customerLastname}
@@ -118,29 +109,13 @@ const ProductsPage = async ({ searchParams }) => {
         </table>
       </div>
       <div className="py-1 flex items-center justify-center font-semibold mt-4">
-        {page >= 1 && (
-          <Link
-            className={`${
-              +page === 1 ? "pointer-events-none text-gray-400" : ""
-            } mr-3 p-2`}
-            href={`/products?page=${+page - 1}`}
-          >
-            <FiChevronsLeft className="cursor-pointer" />
-          </Link>
-        )}
-        <span>
-          {page} / {totalPages}
+        <span className="mr-3">
+          <FiChevronsLeft />
         </span>
-        {page <= totalPages && (
-          <Link
-            className={`${
-              +page === totalPages ? "pointer-events-none text-gray-400" : ""
-            } ml-3 p-2`}
-            href={`/products?page=${+page + 1}`}
-          >
-            <FiChevronsRight className="cursor-pointer" />
-          </Link>
-        )}
+        <span>1/2</span>
+        <span className="ml-3">
+          <FiChevronsRight />
+        </span>
       </div>
     </div>
   );
