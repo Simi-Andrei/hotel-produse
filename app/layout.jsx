@@ -3,8 +3,8 @@ import Header from "./components/header/Header";
 import "./globals.css";
 
 export const metadata = {
-  title: "Hotel anvelope",
-  description: "Aplicatie de management anvelope",
+  title: "Hotel produse",
+  description: "Aplicatie de management produse",
 };
 
 export default function RootLayout({ children }) {

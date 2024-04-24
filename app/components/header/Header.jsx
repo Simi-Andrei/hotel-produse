@@ -26,7 +26,7 @@ const Header = () => {
           <li className="mx-2">
             <Link
               className="rounded inline-block py-1 px-3 hover:bg-gray-700 duration-500"
-              href="/products?page=1"
+              href="/products"
             >
               Produse
             </Link>
