@@ -2,20 +2,10 @@ import Link from "next/link";
 import { FaEdit } from "react-icons/fa";
 import DeleteProductButton from "@/app/components/deleteProductButton/DeleteProductButton";
 
-const ProductsList = ({ products }) => {
-  // const filteredProducts = products.filter(
-  //   (product) =>
-  //     product.customerLastname
-  //       .toLowerCase()
-  //       .startsWith(searchTerm.toLowerCase()) ||
-  //     product.customerFirstname
-  //       .toLowerCase()
-  //       .startsWith(searchTerm.toLowerCase())
-  // );
-
+const ProductsList = ({ products, page }) => {
   return (
     <div>
-      <table className="border border-gray-200 border-collapse w-full">
+      <table className="border-collapse w-full">
         <thead>
           <tr className="text-xs text-left">
             <th className="border border-gray-200 py-1.5 px-1 text-center w-1/12">
@@ -39,8 +29,11 @@ const ProductsList = ({ products }) => {
         {products.length === 0 ? (
           <tbody>
             <tr>
-              <td colSpan={8}>
-                <p className="text-center py-2">
+              <td
+                className="border border-gray-200 py-0.5 px-1 text-center"
+                colSpan={8}
+              >
+                <p>
                   Nu exista produse. Adauga produs sau foloseste alt cuvant de
                   cautare.
                 </p>
@@ -52,7 +45,7 @@ const ProductsList = ({ products }) => {
             {products.map((product, index) => (
               <tr key={index} className="text-xs">
                 <td className="border border-gray-200 py-0.5 px-1 text-center">
-                  {index + 1}
+                  {(page - 1) * 20 + index + 1}
                 </td>
                 <td className="border border-gray-200 py-0.5 px-1">
                   {product.customerLastname}

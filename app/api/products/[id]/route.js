@@ -22,7 +22,8 @@ export const GET = async (req, { params }) => {
 export const POST = async (req, { params }) => {
   try {
     const { id } = params;
-    const { brand, stock, shelf, slot } = await req.json();
+    const { customerLastname, customerFirstname, brand, stock, shelf, slot } =
+      await req.json();
 
     await connectDB();
 
@@ -45,25 +46,40 @@ export const POST = async (req, { params }) => {
         await shelfToFree.save();
       }
 
+      const actualSlot = slot - 1;
+
       const shelfToOccupy = await Shelf.findOne({
         number: shelf.toUpperCase(),
       });
 
-      const actualSlot = slot - 1;
-
       if (shelfToOccupy) {
-        shelfToOccupy.slots[actualSlot] = true;
-        await shelfToOccupy.save();
+        if (shelfToOccupy.slots[actualSlot] === false) {
+          shelfToOccupy.slots[actualSlot] = true;
+          await shelfToOccupy.save();
+
+          existingProduct.customerLastname = customerLastname;
+          existingProduct.customerFirstname = customerFirstname;
+          existingProduct.brand = brand;
+          existingProduct.stock = stock;
+          existingProduct.shelf = shelf;
+          existingProduct.slot = actualSlot;
+          await existingProduct.save();
+
+          return NextResponse.json({
+            message: "Product updated successfully!",
+          });
+        } else {
+          return NextResponse.json(
+            { error: "Slotul este deja ocupat!" },
+            { status: 400 }
+          );
+        }
+      } else {
+        return NextResponse.json({ error: "Shelf not found!" });
       }
-
-      existingProduct.brand = brand;
-      existingProduct.stock = stock;
-      existingProduct.shelf = shelf;
-      existingProduct.slot = actualSlot;
-      await existingProduct.save();
-    } else return;
-
-    return NextResponse.json({ message: "Product updated successfully!" });
+    } else {
+      return NextResponse.json({ error: "Product not found!" });
+    }
   } catch (error) {
     return NextResponse.json({ error: "Failed to edit the product!" });
   }

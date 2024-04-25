@@ -2,4 +2,4 @@ const ProductPage = () => {
   return <div>ProductPage</div>;
 };
 
-export default EditProductPage;
+export default ProductPage;
