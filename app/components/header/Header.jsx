@@ -4,9 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { GiCarWheel } from "react-icons/gi";
 import { BiChevronDown } from "react-icons/bi";
+import { useSession, signOut } from "next-auth/react";
 
 const Header = () => {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const { data: session } = useSession();
 
   return (
     <div className="bg-slate-900 w-full text-white text-sm font-semibold tracking-wide">
@@ -42,7 +46,7 @@ const Header = () => {
           <li className="mx-2">
             <Link
               className="rounded inline-block py-1 px-3 hover:bg-gray-700 duration-500"
-              href="/"
+              href="/users"
             >
               Utilizatori
             </Link>
@@ -56,7 +60,7 @@ const Header = () => {
               <BiChevronDown className="ml-1" />
             </button>
             {settingsMenuOpen && (
-              <div className="bg-white w-36 absolute right-0 top-10 rounded shadow text-black border border-gray-100">
+              <div className="bg-white w-36 absolute right-0 top-10 rounded shadow text-black border border-gray-100 z-50">
                 <ul className="text-right py-2">
                   <li>
                     <Link
@@ -72,12 +76,33 @@ const Header = () => {
             )}
           </li>
         </ul>
-        <Link
-          className="rounded inline-block py-1 px-3 hover:bg-gray-700 duration-500"
-          href="/"
-        >
-          Login
-        </Link>
+        {session?.user ? (
+          <div className="relative">
+            <button
+              onClick={() => setUserMenuOpen((prevState) => !prevState)}
+              className="bg-slate-800 border border-slate-600 hover:brightness-90 py-1 px-6 rounded duration-300"
+              type="button"
+            >
+              {session?.user?.name}
+            </button>
+            {userMenuOpen && (
+              <div className="bg-white w-36 absolute right-0 top-10 rounded shadow text-black border border-gray-100 z-50">
+                <ul className="text-right py-2">
+                  <li>
+                    <button
+                      onClick={() => signOut()}
+                      className="block p-1.5 w-full text-right hover:bg-gray-100 duration-300"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div />
+        )}
       </header>
     </div>
   );

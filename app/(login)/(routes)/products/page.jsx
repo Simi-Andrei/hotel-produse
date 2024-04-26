@@ -48,7 +48,7 @@ const ProductsPage = async ({ searchParams }) => {
   return (
     <div className="h-full flex flex-col justify-center text-sm">
       <div className="py-1 flex items-center justify-between">
-        <AddProductButton />
+        <AddProductButton label="+ Adauga produs" />
         <SearchInput search={search} page={page} />
       </div>
       <div className="py-1 flex-1">
