@@ -1,13 +1,18 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import Title from "@/app/components/title/Title";
+import Input from "@/app/components/input/Input";
+import Form from "@/app/components/form/Form";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loadingForm, setLoadingForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const router = useRouter();
@@ -16,6 +21,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
+      setLoadingForm(true);
       const res = await signIn("credentials", {
         email,
         password,
@@ -29,60 +35,50 @@ const LoginPage = () => {
       router.replace("dashboard");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingForm(false);
     }
   };
 
   return (
-    <div className="h-full grid place-items-center text-sm">
-      <div className="border border-gray-200 p-1 w-1/3 mx-auto mb-44">
-        <h2 className="text-center text-lg font-semibold my-3">Login</h2>
-        <form onSubmit={handleSubmit} className="p-2">
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="email"
-              >
-                Email
-              </label>
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="email"
-              name="email"
-              placeholder="Email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="password"
-              >
-                Parola
-              </label>
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Password"
+    <div className="h-full grid place-items-center text-sm p-2">
+      <div className="border border-gray-200 w-full sm:max-w-96">
+        <Title title="Login" />
+        <Form onSubmit={handleSubmit}>
+          <Input
+            label="Email"
+            idName="email"
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <div className="relative">
+            <Input
+              label="Password"
+              idName="password"
+              type={showPassword ? "text" : "password"}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {password && (
+              <button
+                type="button"
+                onClick={() => setShowPassword((prevState) => !prevState)}
+                className="text-base absolute right-1 top-1/2 p-1 opacity-75"
+              >
+                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </button>
+            )}
           </div>
           {error && <p className="text-red-500">{error}</p>}
-          <div className="mt-3 text-center">
+          <div className="mt-6 text-center">
             <button
+              disabled={loadingForm}
               type="submit"
-              className="disabled:brightness-50 font-semibold inline-block bg-orange-500 rounded py-1.5 px-10 text-white enabled:hover:bg-orange-700 duration-500"
+              className="disabled:brightness-50 disabled:pointer-events-none font-semibold inline-block bg-orange-500 rounded py-1.5 px-10 text-white enabled:hover:bg-orange-700 duration-500"
             >
               Login
             </button>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );

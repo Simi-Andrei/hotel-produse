@@ -11,10 +11,10 @@ const ProductsList = ({ products, page }) => {
             <th className="border border-gray-200 py-1.5 px-1 text-center w-1/12">
               Nr. Crt.
             </th>
-            <th className="border border-gray-200 py-1.5 px-1 w-2/12">
+            <th className="border border-gray-200 py-1.5 px-1 w-3/12">
               NUME CLIENT
             </th>
-            <th className="border border-gray-200 py-1.5 px-1 w-2/12">
+            <th className="border border-gray-200 py-1.5 px-1 w-3/12">
               PRENUME CLIENT
             </th>
             <th className="border border-gray-200 py-1.5 px-1 w-1/12">MARCA</th>

@@ -4,6 +4,8 @@ import { revalidate } from "@/utils/revalidate";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
+import Form from "@/app/components/form/Form";
+import Input from "@/app/components/input/Input";
 
 const AddUserPage = () => {
   const [name, setName] = useState("");
@@ -53,61 +55,25 @@ const AddUserPage = () => {
         <h2 className="text-center text-lg font-semibold my-3">
           Adauga utilizator
         </h2>
-        <form onSubmit={handleSubmit} className="p-2">
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="name"
-              >
-                Nume
-              </label>
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Nume"
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="email"
-              >
-                Email
-              </label>
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="my-2">
-            <div className="flex justify-between">
-              <label
-                className="inline-block font-semibold mb-0.5"
-                htmlFor="password"
-              >
-                Parola
-              </label>
-            </div>
-            <input
-              className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-              type="text"
-              id="password"
-              name="password"
-              placeholder="Parola"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            label="Nume"
+            type="text"
+            idName="name"
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            label="Email"
+            type="email"
+            idName="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            label="Parola"
+            type="text"
+            idName="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
           {error && <p className="text-red-500">{error}</p>}
           <div className="mt-3 text-right">
             <Link
@@ -126,7 +92,7 @@ const AddUserPage = () => {
               + Adauga
             </button>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );

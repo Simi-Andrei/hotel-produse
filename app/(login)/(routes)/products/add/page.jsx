@@ -9,6 +9,9 @@ import { revalidate } from "@/utils/revalidate";
 import { TfiClose } from "react-icons/tfi";
 import { CgSpinner } from "react-icons/cg";
 import Loader from "@/app/components/loader/Loader";
+import Title from "@/app/components/title/Title";
+import Input from "@/app/components/input/Input";
+import Form from "@/app/components/form/Form";
 
 const schema = Yup.object().shape({
   customerLastname: Yup.string()
@@ -53,7 +56,7 @@ const AddProductPage = () => {
       customerLastname: "",
       customerFirstname: "",
       brand: "",
-      stock: 0,
+      stock: "",
       shelf: "",
       slot: "",
     },
@@ -118,118 +121,61 @@ const AddProductPage = () => {
 
   return (
     <div className="text-sm">
-      <div className="border border-gray-200 p-1 w-1/3 mx-auto mt-10">
+      <div className="border border-gray-200 p-1 w-full sm:max-w-96 sm:mx-auto mt-10">
         {slotsLoading ? (
           <Loader classname="min-h-96" />
         ) : (
           <>
-            <h2 className="text-center text-lg font-semibold my-3">
-              Adauga produs
-            </h2>
-            <form onSubmit={handleSubmit} className="p-2">
+            <Title title="Adauga produs" />
+            <Form onSubmit={handleSubmit}>
+              <Input
+                label="Nume client"
+                type="text"
+                idName="customerLastname"
+                value={values.customerLastname}
+                onChange={handleChange}
+              />
+              {errors.customerLastname && touched.customerLastname && (
+                <span className="text-red-500">{errors.customerLastname}</span>
+              )}
+              <Input
+                label="Prenume client"
+                type="text"
+                idName="customerFirstname"
+                value={values.customerFirstname}
+                onChange={handleChange}
+              />
+              {errors.customerFirstname && touched.customerFirstname && (
+                <span className="text-red-500">{errors.customerFirstname}</span>
+              )}
+              <Input
+                label="Marca"
+                type="text"
+                idName="brand"
+                value={values.brand}
+                onChange={handleChange}
+              />
+              {errors.brand && touched.brand && (
+                <span className="text-red-500">{errors.brand}</span>
+              )}
+              <Input
+                label="Stoc"
+                type="number"
+                idName="stock"
+                value={values.stock}
+                onChange={handleChange}
+              />
+              {errors.stock && touched.stock && (
+                <span className="text-red-500">{errors.stock}</span>
+              )}
               <div className="my-2">
-                <div className="flex justify-between">
-                  <label
-                    className="inline-block font-semibold mb-0.5"
-                    htmlFor="customerLastname"
-                  >
-                    Nume client*
-                  </label>
-                  {errors.customerLastname && touched.customerLastname && (
-                    <span className="text-red-500">
-                      {errors.customerLastname}
-                    </span>
-                  )}
-                </div>
-                <input
-                  className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-                  type="text"
-                  id="customerLastname"
-                  name="customerLastname"
-                  value={values.customerLastname}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="my-2">
-                <div className="flex justify-between">
-                  <label
-                    className="inline-block font-semibold mb-0.5"
-                    htmlFor="customerFirstname"
-                  >
-                    Prenume client*
-                  </label>
-                  {errors.customerFirstname && touched.customerFirstname && (
-                    <span className="text-red-500">
-                      {errors.customerFirstname}
-                    </span>
-                  )}
-                </div>
-                <input
-                  className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-                  type="text"
-                  id="customerFirstname"
-                  name="customerFirstname"
-                  value={values.customerFirstname}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="my-2">
-                <div className="flex justify-between">
-                  <label
-                    className="inline-block font-semibold mb-0.5"
-                    htmlFor="brand"
-                  >
-                    Marca*
-                  </label>
-                  {errors.brand && touched.brand && (
-                    <span className="text-red-500">{errors.brand}</span>
-                  )}
-                </div>
-                <input
-                  className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-                  type="text"
-                  id="brand"
-                  name="brand"
-                  value={values.brand}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="my-2">
-                <div className="flex justify-between">
-                  <label
-                    className="inline-block font-semibold mb-0.5"
-                    htmlFor="stock"
-                  >
-                    Stoc*
-                  </label>
-                  {errors.stock && touched.stock && (
-                    <span className="text-red-500">{errors.stock}</span>
-                  )}
-                </div>
-                <input
-                  className="w-full py-1 px-2 rounded-sm focus:outline-gray-300 border border-gray-200 bg-gray-50"
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  value={values.stock}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="my-2">
-                <div className="flex justify-between">
-                  <span className="inline-block font-semibold mb-0.5">
-                    Alege raftul si slotul*
-                  </span>
-                  {errors.slot && touched.slot && (
-                    <span className="text-red-500 text-right">
-                      {errors.slot}
-                    </span>
-                  )}
-                </div>
+                <span className="inline-block font-semibold mb-0.5">
+                  Alege raftul si slotul*
+                </span>
                 <button
                   type="button"
                   onClick={() => setSlotsMap(true)}
-                  className="flex items-center font-semibold border border-gray-200 rounded-sm py-0.5 px-2"
+                  className="flex items-center justify-center font-semibold border border-gray-200 rounded-sm py-0.5 px-2 w-[134px] hover:bg-gray-50 duration-300"
                 >
                   <span
                     className={`${
@@ -354,6 +300,9 @@ const AddProductPage = () => {
                   </div>
                 )}
               </div>
+              {errors.slot && touched.slot && (
+                <span className="text-red-500 text-right">{errors.slot}</span>
+              )}
               <div className="mt-3 text-right">
                 <Link
                   href="/products"
@@ -371,7 +320,7 @@ const AddProductPage = () => {
                   + Adauga
                 </button>
               </div>
-            </form>
+            </Form>
           </>
         )}
       </div>

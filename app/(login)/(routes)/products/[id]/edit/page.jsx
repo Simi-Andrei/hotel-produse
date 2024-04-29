@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { revalidate } from "@/utils/revalidate";
 import { useParams } from "next/navigation";
 import Loader from "@/app/components/loader/Loader";
+import Form from "@/app/components/form/Form";
+import Input from "@/app/components/input/Input";
 
 const schema = Yup.object().shape({
   customerLastname: Yup.string()
@@ -127,7 +129,14 @@ const EditProductPage = () => {
             <h2 className="text-center text-lg font-semibold my-3">
               Editeaza produs
             </h2>
-            <form onSubmit={handleSubmit} className="p-2">
+            <Form onSubmit={handleSubmit}>
+              <Input
+                label="Nume"
+                type="text"
+                idName="name"
+                onChange={handleChange}
+                value={values.customerLastname}
+              />
               <div className="my-2">
                 <div className="flex justify-between">
                   <label
@@ -300,7 +309,7 @@ const EditProductPage = () => {
                   + Salveaza
                 </button>
               </div>
-            </form>
+            </Form>
           </>
         )}
       </div>

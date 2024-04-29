@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { GiCarWheel } from "react-icons/gi";
 import { BiChevronDown } from "react-icons/bi";
+import { FaUserCircle } from "react-icons/fa";
 import { useSession, signOut } from "next-auth/react";
 
 const Header = () => {
@@ -15,8 +16,9 @@ const Header = () => {
   return (
     <div className="bg-slate-900 w-full text-white text-sm font-semibold tracking-wide">
       <header className="container mx-auto flex items-center justify-between p-2">
-        <Link href="/">
+        <Link className="flex items-center justify-between" href="/dashboard">
           <GiCarWheel className="text-3xl text-gray-200" />
+          <h1 className="ml-2 text-lg tracking-tighter">Hotel Produse</h1>
         </Link>
         <ul className="flex">
           <li className="mx-2">
@@ -60,12 +62,12 @@ const Header = () => {
               <BiChevronDown className="ml-1" />
             </button>
             {settingsMenuOpen && (
-              <div className="bg-white w-36 absolute right-0 top-10 rounded shadow text-black border border-gray-100 z-50">
+              <div className="bg-white w-44 absolute right-0 top-10 rounded shadow text-black border border-gray-100 z-50">
                 <ul className="text-right py-2">
                   <li>
                     <Link
                       onClick={() => setSettingsMenuOpen(false)}
-                      className="block p-1.5 hover:bg-gray-100 duration-300"
+                      className="block py-1.5 px-4 hover:bg-gray-100 duration-300"
                       href="/settings/general"
                     >
                       Setari generale
@@ -80,18 +82,19 @@ const Header = () => {
           <div className="relative">
             <button
               onClick={() => setUserMenuOpen((prevState) => !prevState)}
-              className="bg-slate-800 border border-slate-600 hover:brightness-90 py-1 px-6 rounded duration-300"
+              className="w-64 bg-slate-800 border border-slate-600 hover:brightness-90 py-1 px-6 rounded duration-300 flex items-center justify-center"
               type="button"
             >
               {session?.user?.name}
+              <FaUserCircle className="ml-2 text-base" />
             </button>
             {userMenuOpen && (
-              <div className="bg-white w-36 absolute right-0 top-10 rounded shadow text-black border border-gray-100 z-50">
+              <div className="bg-white w-44 absolute right-0 top-10 rounded shadow text-black border border-gray-100 z-50">
                 <ul className="text-right py-2">
                   <li>
                     <button
                       onClick={() => signOut()}
-                      className="block p-1.5 w-full text-right hover:bg-gray-100 duration-300"
+                      className="block py-1.5 px-4 w-full text-right hover:bg-gray-100 duration-300"
                     >
                       Logout
                     </button>
