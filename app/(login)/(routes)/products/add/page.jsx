@@ -12,6 +12,8 @@ import Loader from "@/app/components/loader/Loader";
 import Title from "@/app/components/title/Title";
 import Input from "@/app/components/input/Input";
 import Form from "@/app/components/form/Form";
+import PrimaryButton from "@/app/components/primaryButton/PrimaryButton";
+import SecondaryButton from "@/app/components/secondaryButton/SecondaryButton";
 
 const schema = Yup.object().shape({
   customerLastname: Yup.string()
@@ -175,7 +177,7 @@ const AddProductPage = () => {
                 <button
                   type="button"
                   onClick={() => setSlotsMap(true)}
-                  className="flex items-center justify-center font-semibold border border-gray-200 rounded-sm py-0.5 px-2 w-[134px] hover:bg-gray-50 duration-300"
+                  className="font-semibold border border-gray-200 rounded-sm py-1 w-full hover:bg-gray-50 duration-300"
                 >
                   <span
                     className={`${
@@ -303,22 +305,19 @@ const AddProductPage = () => {
               {errors.slot && touched.slot && (
                 <span className="text-red-500 text-right">{errors.slot}</span>
               )}
-              <div className="mt-3 text-right">
-                <Link
+              <div className="mt-6 text-right flex items-center justify-evenly">
+                <SecondaryButton
+                  role="link"
                   href="/products"
-                  className={`${
-                    loadingForm && "brightness-50 pointer-events-none"
-                  } font-semibold inline-block bg-black rounded py-1.5 px-4 text-white hover:bg-neutral-700 duration-500 mr-4`}
-                >
-                  - Anulare
-                </Link>
-                <button
-                  disabled={loadingForm}
+                  label="- Anulare"
+                  className={loadingForm && "pointer-events-none brightness-90"}
+                />
+                <PrimaryButton
+                  role="button"
                   type="submit"
-                  className="disabled:brightness-50 font-semibold inline-block bg-orange-500 rounded py-1.5 px-4 text-white enabled:hover:bg-orange-700 duration-500"
-                >
-                  + Adauga
-                </button>
+                  label="+ Adauga"
+                  disabled={loadingForm}
+                />
               </div>
             </Form>
           </>

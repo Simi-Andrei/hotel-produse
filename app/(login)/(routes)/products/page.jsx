@@ -2,8 +2,8 @@ import connectDB from "@/lib/database";
 import Product from "@/models/product";
 import ProductsList from "@/app/components/productsList/ProductsList";
 import SearchInput from "@/app/components/searchInput/SearchInput";
-import AddProductButton from "@/app/components/addProductButton/AddProductButton";
 import Pagination from "@/app/components/pagination/Pagination";
+import PrimaryButton from "@/app/components/primaryButton/PrimaryButton";
 
 export const getProducts = async ({ search, page = 1 }) => {
   try {
@@ -48,7 +48,11 @@ const ProductsPage = async ({ searchParams }) => {
   return (
     <div className="h-full flex flex-col justify-center text-sm">
       <div className="py-1 flex items-center justify-between">
-        <AddProductButton label="+ Adauga produs" />
+        <PrimaryButton
+          role="link"
+          href="/products/add"
+          label="+ Adauga produs"
+        />
         <SearchInput search={search} page={page} />
       </div>
       <div className="py-1 flex-1">

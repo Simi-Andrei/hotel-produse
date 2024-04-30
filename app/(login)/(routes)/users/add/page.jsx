@@ -6,12 +6,14 @@ import Link from "next/link";
 import { useState } from "react";
 import Form from "@/app/components/form/Form";
 import Input from "@/app/components/input/Input";
+import PrimaryButton from "@/app/components/primaryButton/PrimaryButton";
+import SecondaryButton from "@/app/components/secondaryButton/SecondaryButton";
 
 const AddUserPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [loadingForm, setLoadingForm] = useState(false);
 
   const router = useRouter();
@@ -37,21 +39,21 @@ const AddUserPage = () => {
       if (res.ok) {
         revalidate(`/users`);
         router.push(`/users`);
+        setLoadingForm(false);
       } else {
-        const error = await res.json();
+        const { error } = await res.json();
         console.log(error);
-        setError(error.message);
+        setError(error);
+        setLoadingForm(false);
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoadingForm(false);
     }
   };
 
   return (
     <div className="text-sm">
-      <div className="border border-gray-200 p-1 w-1/3 mx-auto mt-10">
+      <div className="border border-gray-200 p-1 w-1/3 mx-auto mt-10 rounded">
         <h2 className="text-center text-lg font-semibold my-3">
           Adauga utilizator
         </h2>
@@ -75,22 +77,19 @@ const AddUserPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           {error && <p className="text-red-500">{error}</p>}
-          <div className="mt-3 text-right">
-            <Link
+          <div className="mt-6 text-right flex items-center justify-evenly">
+            <SecondaryButton
+              role="link"
               href="/users"
-              className={`${
-                loadingForm && "brightness-50 pointer-events-none"
-              } font-semibold inline-block bg-black rounded py-1.5 px-4 text-white hover:bg-neutral-700 duration-500 mr-4`}
-            >
-              - Anulare
-            </Link>
-            <button
-              disabled={loadingForm}
+              label="- Anulare"
+              className={loadingForm && "pointer-events-none brightness-90"}
+            />
+            <PrimaryButton
+              role="button"
               type="submit"
-              className="disabled:brightness-50 font-semibold inline-block bg-orange-500 rounded py-1.5 px-4 text-white enabled:hover:bg-orange-700 duration-500"
-            >
-              + Adauga
-            </button>
+              label="+ Adauga"
+              disabled={loadingForm}
+            />
           </div>
         </Form>
       </div>

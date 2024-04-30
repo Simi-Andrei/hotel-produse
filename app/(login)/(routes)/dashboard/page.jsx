@@ -4,8 +4,12 @@ import { signOut } from "next-auth/react";
 
 const DashboardPage = () => {
   return (
-    <div>
-      <button onClick={() => signOut()}>LOGOUT</button>
+    <div className="h-full bg-red-100">
+      <div>
+        <div></div>
+        <div></div>
+      </div>
+      <div></div>
     </div>
   );
 };
